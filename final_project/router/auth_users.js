@@ -16,7 +16,16 @@ const isValid = (username)=>{ // returns boolean
 }
 
 const authenticatedUser = (username,password)=>{ //returns boolean
-//write code to check if username and password match the one we have in records.
+  // Check if the username is already registered
+  if(!isValid(username)){
+    return false;
+  }
+  // Check if the password is correct
+  for(let user in users){
+    if(users[user].username == username && users[user].password == Buffer.from(password).toString('base64')){
+      return true;
+    }
+  }
 }
 
 // only registered users can login - Task 7
@@ -27,20 +36,8 @@ regd_users.post("/login", (req,res) => {
   if(!username || !password){
     return res.status(400).json({message: "Username and password are required"});
   }
-  // Check if the username is already registered
-  if(!isValid(username)){
-    return res.status(401).json({message: "Invalid credentials"});
-  }
-  // Define a boolean variable to check if the password is correct
-  let isPasswordCorrect = false;
-  // Check if the password is correct
-  for(let user in users){
-    if(users[user].username == username && users[user].password == Buffer.from(password).toString('base64')){
-      isPasswordCorrect = true;
-      break;
-    }
-  };
-  if(!isPasswordCorrect){
+  // Check credentials
+  if(!authenticatedUser(username,password)){
     return res.status(401).json({message: "Invalid credentials"});
   }
   // Generate token and save it in the session
