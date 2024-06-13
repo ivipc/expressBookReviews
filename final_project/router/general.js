@@ -78,10 +78,34 @@ public_users.get('/title/:title',function (req, res) {
     return res.status(404).json({message: "Book not found"});
 });
 
-//  Get book review
+//  Get book review - Task 5
 public_users.get('/review/:isbn',function (req, res) {
-    //Write your code here
-    return res.status(300).json({message: "Yet to be implemented"});
+    // Retrieve the ISBN from the request parameters
+    const isbn = req.params.isbn;
+    // Initialize an empty array to store the reviews for the book
+    let reviews = [];
+    // Initiali<e a boolean variable to check if the book is found
+    let bookFound = false;
+    // Iterate through the ‘books’ array & check the ISBN matches the one
+    for(let book in books){
+        if(books[book].isbn == isbn){
+            reviews = books[book].reviews;
+            bookFound = true;
+            break;
+        }
+    };
+    // Check if any reviews were found for the book
+    if(reviews.length > 0){
+        // Return the array of reviews for the book
+        return res.status(200).send(JSON.stringify(reviews, null, 4));
+    }
+    if (!bookFound){
+        // If no reviews were found, return a 404 error
+        return res.status(404).json({message: "Book not found"});
+    }
+    // If no reviews were found, return a 404 error
+    return res.status(404).json({message: "Book found but no reviews"});
+    
 });
 
 module.exports.general = public_users;
