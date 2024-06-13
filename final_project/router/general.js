@@ -4,6 +4,9 @@ let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
+// Import Axios
+const axios = require('axios');
+
 // Register a new user - Task 6
 public_users.post("/register", (req,res) => {
     // Retrieve the username and password from the request body
@@ -120,6 +123,20 @@ public_users.get('/review/:isbn',function (req, res) {
     // If no reviews were found, return a 404 error
     return res.status(404).json({message: "Book found but no reviews"});
     
+});
+
+// Add the code for getting the list of books available in the shop (done in Task 1) using async-await with Axios - Task 10
+async function getBooks() {
+    try {
+      const response = await axios.get('http://localhost:3000/');
+      books = response.data.books;
+    } catch (error) {
+      console.error(error);
+    }
+}
+public_users.get('/async', async function (req, res) {
+    await getBooks();
+    return res.status(200).send(JSON.stringify({books}, null, 4));
 });
 
 module.exports.general = public_users;

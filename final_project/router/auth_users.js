@@ -97,7 +97,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
   };
 });
 
-// Deleting a book review under - Task 9
+// Deleting a book review under - Task 9 - TODO: Screenshot: 9-deletereview.png
 regd_users.delete("/auth/review/:isbn", (req, res) => {
   // Filter & delete the reviews based on the session username, so that a user can delete only his/her reviews and not other users’.
   // Authentication is already done by the middleware
