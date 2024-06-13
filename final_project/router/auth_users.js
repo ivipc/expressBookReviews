@@ -83,7 +83,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
       break;
     }
   };
-  console.log({books});
+  // console.log({books});
   // Check if the book is found
   if(bookFound){
     // Return a success message
@@ -100,6 +100,41 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
 // Deleting a book review under - Task 9
 regd_users.delete("/auth/review/:isbn", (req, res) => {
   // Filter & delete the reviews based on the session username, so that a user can delete only his/her reviews and not other users’.
+  // Authentication is already done by the middleware
+  // Retrieve the ISBN from the request parameters
+  const isbn = req.params.isbn
+  // Retrieve the username from the session
+  const username = req.user.username
+  // Initialize a boolean variable to check if the book is found
+  let bookFound = false;
+  // Initialize a boolean variable to check if the book is reviewed by the user
+  let userReviewed = false;
+  // Iterate through the ‘books’ array & check the ISBN matches the one
+  for(let book in books){
+    if(books[book].isbn == isbn){
+      // The book is found
+      bookFound = true;
+      // Check if the user has already reviewed the book
+      for(let review_user in books[book].reviews){
+        if(books[book].reviews[review_user].username == username){
+          // Delete the review
+          delete books[book].reviews[review_user];
+          userReviewed = true;
+          break;
+        }
+      }
+      break;
+    }
+  };
+  if (bookFound){
+    // Return a success message
+    if (userReviewed){
+      return res.status(200).json({message: "Review deleted successfully"});
+    }
+    return res.status(200).json({message: "Review not found"})
+  }
+  // If the book is not found, return a 404 error
+  return res.status(404).json({message: "Book not found"});
 });
 
 module.exports.authenticated = regd_users;
