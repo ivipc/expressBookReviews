@@ -138,7 +138,7 @@ public_users.get('/async', async function (req, res) {
         return res.status(200).send(JSON.stringify(response.data, null, 4));
     } catch (error) {
         // Handle any errors that occur during the request
-        console.error(error);
+        console.error({error});
         // Return a 404 error if the book is not found
         return res.status(404).json({message: "An error occurred while fetching the book list"});
     }    
@@ -147,7 +147,7 @@ public_users.get('/async', async function (req, res) {
 // Getting the book details based on ISBN (done in Task 2) using async-await with Axios - Task 11
 public_users.get('/async/isbn/:isbn', async function (req, res) {
     // Retrieve the ISBN from the request parameters
-    const isbn = req.params.isbn
+    const isbn = req.params.isbn;
     try {
         // Make a GET request to the server
         const response = await axios.get(`http://localhost:5000/isbn/${isbn}`);
@@ -159,7 +159,7 @@ public_users.get('/async/isbn/:isbn', async function (req, res) {
         return res.status(200).send(JSON.stringify(response.data, null, 4));
     } catch (error) {
         // Handle any errors that occur during the request
-        console.error(error);
+        console.error({error});
         // Return a 404 error if the book is not found
         return res.status(404).json({message: "An error occurred while fetching the book details"});
     }
@@ -180,11 +180,31 @@ public_users.get('/async/author/:author', async function (req, res) {
         return res.status(200).send(JSON.stringify(response.data, null, 4));
     } catch (error) {
         // Handle any errors that occur during the request
-        console.error(error);
+        console.error({error});
         // Return a 404 error if the book is not found
         return res.status(404).json({message: "An error occurred while fetching the book details"});
     }
 });
 
+// Getting the book details based on Title (done in Task 4) using async-await with Axios - Task 13
+public_users.get('/async/title/:title', async function (req, res) {
+    // Retrieve the title from the request parameters
+    const title = req.params.title;
+    try {
+        // Make a GET request to the server
+        const response = await axios.get(`http://localhost:5000/title/${title}`);
+        // Check if the request was successful
+        if (response.status !== 200) {
+            throw new Error('Request failed with status code ' + response.status);
+        }
+        // Return the book details as JSON
+        return res.status(200).send(JSON.stringify(response.data, null, 4));
+    } catch (error) {
+        // Handle any errors that occur during the request
+        console.error({error});
+        // Return a 404 error if the book is not found
+        return res.status(404).json({message: "An error occurred while fetching the book details"});
+    }
+});
 
 module.exports.general = public_users;
