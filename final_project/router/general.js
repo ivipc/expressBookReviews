@@ -125,8 +125,8 @@ public_users.get('/review/:isbn',function (req, res) {
     
 });
 
-// Add the code for getting the list of books available in the shop (done in Task 1) using async-await with Axios - Task 10
-async function getBooks(callback) {
+// Getting the list of books available in the shop (done in Task 1) using async-await with Axios - Task 10
+public_users.get('/async', async function (req, res) {
     try {
         // Make a GET request to the server
         const response = await axios.get('http://localhost:5000/');
@@ -134,23 +134,35 @@ async function getBooks(callback) {
         if (response.status !== 200) {
             throw new Error('Request failed with status code ' + response.status);
         }
-        // Pass the response data to the callback function
-        callback(null, response.data.books);
+        // Return the book list as JSON
+        return res.status(200).send(JSON.stringify(response.data, null, 4));
     } catch (error) {
         // Handle any errors that occur during the request
         console.error(error);
-        // Pass the error to the callback function
-        callback(error, null);
+        // Return a 404 error if the book is not found
+        return res.status(404).json({message: "An error occurred while fetching the book list"});
+    }    
+});
+
+// Getting the book details based on ISBN (done in Task 2) using async-await with Axios - Task 11
+public_users.get('/async/isbn/:isbn', async function (req, res) {
+    // Retrieve the ISBN from the request parameters
+    const isbn = req.params.isbn
+    try {
+        // Make a GET request to the server
+        const response = await axios.get(`http://localhost:5000/isbn/${isbn}`);
+        // Check if the request was successful
+        if (response.status !== 200) {
+            throw new Error('Request failed with status code ' + response.status);
+        }
+        // Return the book details as JSON
+        return res.status(200).send(JSON.stringify(response.data, null, 4));
+    } catch (error) {
+        // Handle any errors that occur during the request
+        console.error(error);
+        // Return a 404 error if the book is not found
+        return res.status(404).json({message: "An error occurred while fetching the book details"});
     }
-}
-public_users.get('/async', async function (req, res) {
-    // Call the getBooks function to retrieve the list of books
-    await getBooks((err, data) => {
-        // Check if an error occurred
-        if (err) return res.status(404).json({message: "Books not found"});
-        // Return the list of books as JSON
-        return res.status(200).send(JSON.stringify({books: data}, null, 4));
-    });
 });
 
 module.exports.general = public_users;
