@@ -8,8 +8,10 @@ const app = express();
 
 app.use(express.json());
 
+// Session for customer
 app.use("/customer",session({secret:"fingerprint_customer",resave: true, saveUninitialized: true}))
 
+// Authentication for customer
 app.use("/customer/auth/*", function auth(req,res,next){
     // Check if the jwt token is valid
     const token = req.session.token;
