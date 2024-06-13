@@ -126,17 +126,31 @@ public_users.get('/review/:isbn',function (req, res) {
 });
 
 // Add the code for getting the list of books available in the shop (done in Task 1) using async-await with Axios - Task 10
-async function getBooks() {
+async function getBooks(callback) {
     try {
-      const response = await axios.get('http://localhost:3000/');
-      books = response.data.books;
+        // Make a GET request to the server
+        const response = await axios.get('http://localhost:5000/');
+        // Check if the request was successful
+        if (response.status !== 200) {
+            throw new Error('Request failed with status code ' + response.status);
+        }
+        // Pass the response data to the callback function
+        callback(null, response.data.books);
     } catch (error) {
-      console.error(error);
+        // Handle any errors that occur during the request
+        console.error(error);
+        // Pass the error to the callback function
+        callback(error, null);
     }
 }
 public_users.get('/async', async function (req, res) {
-    await getBooks();
-    return res.status(200).send(JSON.stringify({books}, null, 4));
+    // Call the getBooks function to retrieve the list of books
+    await getBooks((err, data) => {
+        // Check if an error occurred
+        if (err) return res.status(404).json({message: "Books not found"});
+        // Return the list of books as JSON
+        return res.status(200).send(JSON.stringify({books: data}, null, 4));
+    });
 });
 
 module.exports.general = public_users;
