@@ -112,9 +112,9 @@ public_users.get('/review/:isbn',function (req, res) {
         }
     };
     // Check if any reviews were found for the book
-    if(reviews.length > 0){
+    if(Object.keys(reviews).length > 0){
         // Return the array of reviews for the book
-        return res.status(200).send(JSON.stringify(reviews, null, 4));
+        return res.status(200).send(JSON.stringify({reviews}, null, 4));
     }
     if (!bookFound){
         // If no reviews were found, return a 404 error

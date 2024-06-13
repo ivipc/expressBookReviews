@@ -55,7 +55,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
   // Retrieve the ISBN from the request parameters
   const isbn = req.params.isbn;
   // Retrieve the review from the request query
-  const review = req.query.review;
+  const review = req.body.review;
   // Retrieve the username from the session
   const username = req.user.username;
   // Initialize a boolean variable to check if the book is found
@@ -67,9 +67,9 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
     if(books[book].isbn == isbn){
       // Check if the user has already reviewed the book
       for(let review_user in books[book].reviews){
-        if(books[book].reviews[review_user].username == username){
+        if(review_user == username){
           // Modify the existing review
-          books[book].reviews[review_user].review = review;
+          books[book].reviews[review_user] = review;
           bookFound = true;
           userReviewed = true;
           break;
@@ -77,7 +77,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
       }
       // If the user has not reviewed the book, add a new review
       if(!bookFound){
-        books[book].reviews[username] = {username, review};
+        books[book].reviews[username] = review;
         bookFound = true;
       }
       break;
